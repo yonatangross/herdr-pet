@@ -1,0 +1,42 @@
+id = "pet"
+name = "Herdr Pet"
+version = "0.1.0"
+min_herdr_version = "0.7.4"
+description = "Codex-style animated pet floating over your agent panes, reacting to agent status"
+platforms = ["macos", "linux"]
+
+# Requires `[experimental] kitty_graphics = true` in the herdr config and a
+# host terminal that speaks the kitty graphics protocol (Ghostty, kitty, WezTerm).
+
+# Fetch the prebuilt herdr-pet binary for this platform into
+# ./target/release/herdr-pet — everything below invokes that binary.
+# (Dev installs via `herdr plugin link` build with `cargo build --release`.)
+[[build]]
+command = ["bash", "scripts/install.sh"]
+
+[[startup]]
+command = ["./target/release/herdr-pet", "ensure"]
+
+[[actions]]
+id = "toggle"
+title = "Pet: toggle"
+description = "Wake the pet or tuck it away"
+contexts = ["workspace"]
+command = ["./target/release/herdr-pet", "toggle"]
+
+[[actions]]
+id = "settings"
+title = "Pet: settings"
+description = "Open the pet settings popover (pet, size, speed, mode, …)"
+contexts = ["workspace"]
+command = ["./target/release/herdr-pet", "open-settings"]
+
+# The settings popover itself; opened by the `settings` action via
+# `herdr plugin pane open --plugin pet --entrypoint settings`.
+[[panes]]
+id = "settings"
+title = "Pet settings"
+placement = "popup"
+width = 64
+height = 16
+command = ["./target/release/herdr-pet", "settings"]

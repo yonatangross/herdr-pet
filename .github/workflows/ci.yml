@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        runner: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v7
+      # --locked so a dependency added without committing Cargo.lock fails here
+      # rather than drifting silently into a release build
+      - run: cargo build --locked
+      - run: cargo clippy --all-targets -- -D warnings
