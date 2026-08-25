@@ -91,15 +91,29 @@ warm_panes = 4              # recently used panes that keep their pet ready
 
 ## Pets
 
-None are bundled. A pet is a folder with `pet.json` + `spritesheet.webp` in
-Codex's format (made with OpenAI's `hatch-pet` skill). Put it in
-`~/.codex/pets/` — the same place Codex keeps its pets — and switch with
-`herdr-pet use <name>` or the popover. 
+None are bundled — grab one from a gallery (each lands in `~/.codex/pets`,
+where the plugin looks; it shows up in the popover right away):
 
-Browse more: [petdex.dev](https://petdex.dev) (`npx petdex install <slug>`),
-[awesome-codex-pet](https://github.com/legeling/awesome-codex-pet),
-[codex-pokepets](https://github.com/dnnyngyen/codex-pokepets). Mind each pet's
-own licence.
+- [petdex.dev](https://petdex.dev) — `npx petdex install <slug>`
+- [codexpet.top](https://codexpet.top) — copy-paste install command on each pet's page
+- [codex-pokepets](https://github.com/dnnyngyen/codex-pokepets) — every Pokémon, one curl
+- or make your own with `hatch-pet` skill in Codex
+
+The 8 official Codex pets (`codex`, `dewey`, `fireball`, `rocky`, `seedy`,
+`stacky`, `bsod`, `null-signal`) aren't licensed for bundling, but you can
+fetch one for yourself from Codex's CDN — the same download its CLI does:
+
+```bash
+id=dewey; d=~/.codex/pets/$id; mkdir -p $d
+curl -o $d/spritesheet.webp "https://persistent.oaistatic.com/codex/pets/v1/$id-spritesheet-v4.webp"
+printf '{"id":"%s"}' $id > $d/pet.json
+```
+
+Then switch with the popover or `herdr-pet use <name>`.
+
+A pet is just a folder with `pet.json` + `spritesheet.webp` in Codex's format;
+the plugin also reads its own `pets/` folder and plain paths
+(`herdr-pet use ./my-pet`).
 
 ## Good to know
 
