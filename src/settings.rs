@@ -17,6 +17,8 @@ enum Row {
     Speed,
     Transitions,
     Quantize,
+    /// Only listed in ROWS on macOS, where drag exists.
+    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     Drag,
     WarmPanes,
 }

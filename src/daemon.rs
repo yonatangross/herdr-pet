@@ -13,6 +13,7 @@ use std::sync::mpsc::{self, Receiver, RecvTimeoutError, Sender};
 static STREAM_GEN: AtomicU64 = AtomicU64::new(0);
 use std::time::{Duration, Instant};
 
+#[cfg_attr(not(target_os = "macos"), allow(dead_code))]
 pub enum Msg {
     /// Pushed event envelope from the global subscription.
     Event(Value),
@@ -24,14 +25,10 @@ pub enum Msg {
     /// A background pet load finished (tagged with the load generation that requested it).
     PetLoaded { gen: u64, result: Result<(Option<Pet>, Grid), String> },
     Shutdown,
-    // Only the macOS event tap constructs the drag messages.
-    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
+    // Only the macOS event tap constructs the drag messages (enum-level allow above).
     DragStart,
-    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     Drag { dx: f64, dy: f64 },
-    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     DragEnd,
-    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     DragInfo(String),
 }
 
