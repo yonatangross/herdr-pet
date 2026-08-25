@@ -16,5 +16,5 @@ jobs:
       - uses: actions/checkout@v7
       # --locked so a dependency added without committing Cargo.lock fails here
       # rather than drifting silently into a release build
-      - run: cargo build --locked
+      - run: cargo test --locked
       - run: cargo clippy --all-targets -- -D warnings

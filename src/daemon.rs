@@ -24,9 +24,14 @@ pub enum Msg {
     /// A background pet load finished (tagged with the load generation that requested it).
     PetLoaded { gen: u64, result: Result<(Option<Pet>, Grid), String> },
     Shutdown,
+    // Only the macOS event tap constructs the drag messages.
+    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     DragStart,
+    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     Drag { dx: f64, dy: f64 },
+    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     DragEnd,
+    #[cfg_attr(not(target_os = "macos"), allow(dead_code))]
     DragInfo(String),
 }
 
