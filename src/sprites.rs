@@ -193,7 +193,9 @@ fn encode_png(img: &RgbaImage, width: u32, height: u32, quantize: bool) -> Resul
         indices.resize((width * height) as usize, 0);
     } else {
         let quant = color_quant::NeuQuant::new(10, 255, &visible);
-        for entry in quant.color_map_rgba().chunks_exact(4) {
+        let map = quant.color_map_rgba();
+        let (entries, _) = map.as_chunks::<4>();
+        for entry in entries {
             palette.extend_from_slice(&entry[..3]);
             trns.push(entry[3]);
         }
