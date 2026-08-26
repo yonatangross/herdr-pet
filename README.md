@@ -68,8 +68,21 @@ missing.
 
 ## Use
 
-Everything in the popover applies immediately. The same knobs exist on the CLI
-for scripting: `herdr-pet use|move|status|list|bigger|smaller|faster|slower|start|stop|restart`.
+Everything in the popover applies immediately. The same knobs exist on the
+`herdr-pet` CLI:
+
+| command | |
+|---|---|
+| `toggle` | show / tuck away (same as the key) |
+| `settings` | the popover, in the current terminal |
+| `use <pet>` | switch pet (name or path) |
+| `move <col> <row>` · `move default` | place the pet / back to the corner |
+| `bigger` / `smaller` | size ±1 row |
+| `faster` / `slower` | speed ±25 % |
+| `status` | daemon state, active pet, config & log paths |
+| `list` | installed pets |
+| `start` / `stop` / `restart` | daemon lifecycle |
+| `dump <pet> <dir>` | write a pet's frames as PNGs (debugging) |
 
 The pet survives herdr restarts on its own. Tucking it away keeps the daemon
 running so waking is instant; `herdr-pet stop` shuts it down entirely.
