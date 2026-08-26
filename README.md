@@ -68,8 +68,11 @@ running so waking is instant; `herdr-pet stop` shuts it down entirely.
 **Moving it:** on macOS, hold **⌃⌥** and drag — the pet runs along with you and
 stays where you drop it. First time, macOS will ask for Accessibility
 permission for your terminal app. Dragging only works at the machine herdr
-runs on; over SSH (or on Linux) use `herdr-pet move <col> <row>` /
-`herdr-pet move default`.
+runs on; over SSH (or on Linux) use the picker or `herdr-pet move`.
+
+No drag available? The settings popover has a **Position…** row: press enter
+and tap (or drag) a spot on a little map of your pane — the pet moves there
+live. Arrows nudge it, `d` puts it back in the corner.
 
 ## Config
 
