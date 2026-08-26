@@ -1,6 +1,6 @@
 id = "pet"
 name = "Herdr Pet"
-version = "0.1.1"
+version = "0.1.2"
 min_herdr_version = "0.7.4"
 description = "Codex-style animated pet floating over your agent panes, reacting to agent status"
 platforms = ["macos", "linux"]
