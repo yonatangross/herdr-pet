@@ -54,8 +54,17 @@ description = "pet: settings"
 ```
 
 Then `herdr server reload-config` and detach/reattach each client (`prefix+q`,
-then `herdr`) — the graphics flag only takes effect on a fresh client. Finally,
-install a pet (below).
+then `herdr`) — the graphics flag only takes effect on a fresh client.
+
+### First time
+
+1. Install the plugin and do the config + reattach above.
+2. Get a pet, e.g. `npx petdex install boba` (more options under [Pets](#pets)).
+3. Press `prefix+shift+p` — the pet daemon starts.
+4. Press `prefix+shift+o`, pick your pet on the **Pet** row. Done.
+
+Stuck? `herdr-pet status` and the log it points at tell you which step is
+missing.
 
 ## Use
 
@@ -81,7 +90,7 @@ edits apply on `herdr-pet restart`.
 
 ```toml
 enabled = true
-pet = "desk-otter"          # a pet name, or a path to one
+pet = ""                    # a pet name or path; pick one in the popover after installing
 mode = "all"                # all: follows the focused pane · agents: one on every agent pane
 size = 6                    # height in terminal rows
 transitions = true          # wave/jump on status changes (off = calmer, steadier size)

@@ -147,7 +147,11 @@ fn status() -> Result<(), String> {
         None => "not running".into(),
     };
     println!("daemon: {state}");
-    let resolved = sprites::resolve_pet(&cfg.pet).map(|p| p.display().to_string()).unwrap_or_else(|| "NOT FOUND".into());
+    let resolved = if cfg.pet.is_empty() {
+        "(none configured)".into()
+    } else {
+        sprites::resolve_pet(&cfg.pet).map(|p| p.display().to_string()).unwrap_or_else(|| "NOT FOUND".into())
+    };
     println!("pet: {} → {resolved}{}", cfg.pet, if cfg.enabled { "" } else { " (hidden)" });
     println!(
         "mode={} size={} position={} transitions={} speed={} quantize={} drag={} warm_panes={}",
@@ -231,10 +235,12 @@ fn main() {
         "start" | "ensure" => start(),
         "stop" => stop(),
         "restart" => stop().and_then(|_| start()),
-        // Wake / tuck away. The daemon keeps running (idle while disabled) so waking is instant.
+        // Wake / tuck away. With no daemon running nothing is on screen, so the
+        // press means "show the pet" — first use after an install starts it.
+        // Otherwise flip; the daemon keeps running while tucked away.
         "toggle" => (|| {
             let mut cfg = PetConfig::load()?;
-            cfg.enabled = !cfg.enabled;
+            cfg.enabled = if running_pid().is_none() { true } else { !cfg.enabled };
             let summary = apply(&cfg)?;
             println!("pet: {}", if cfg.enabled { summary } else { "tucked away".to_owned() });
             if cfg.enabled && running_pid().is_none() {

@@ -103,7 +103,10 @@ fn grid_for(rows_wanted: u32, cell: Cell) -> Grid {
 
 /// Resolve + size + decode a pet for `rows` terminal rows (None when disabled).
 fn load_for(name: &str, rows: u32, cell: Cell, quantize: bool) -> Result<(Option<Pet>, Grid), Box<dyn std::error::Error>> {
-    let dir = sprites::resolve_pet(name).ok_or_else(|| format!("no pet named {name:?} (run the \"Pet: list pets\" action)"))?;
+    if name.is_empty() {
+        return Err("no pet configured — pick one in the settings popover".into());
+    }
+    let dir = sprites::resolve_pet(name).ok_or_else(|| format!("no pet named {name:?} (see `herdr-pet list`)"))?;
     let grid = grid_for(rows, cell);
     let t0 = Instant::now();
     let pet = sprites::load_pet(&dir, Some(grid.rows * cell.height_px), quantize)?;

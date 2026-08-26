@@ -70,7 +70,7 @@ impl Default for PetConfig {
     fn default() -> Self {
         Self {
             enabled: true,
-            pet: "desk-otter".into(),
+            pet: String::new(),
             mode: Mode::All,
             size: 6,
             position: None,

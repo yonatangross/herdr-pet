@@ -76,7 +76,7 @@ impl Row {
     fn value(self, cfg: &PetConfig) -> String {
         match self {
             Row::Enabled => if cfg.enabled { "on" } else { "off" }.into(),
-            Row::Pet => cfg.pet.clone(),
+            Row::Pet => if cfg.pet.is_empty() { "(pick one)".into() } else { cfg.pet.clone() },
             Row::Mode => cfg.mode.as_str().into(),
             Row::Size => format!("{} rows", cfg.size),
             Row::Speed => format!("{:.2}x", cfg.speed),
