@@ -4,6 +4,8 @@ A Codex-style pet that lives on your [herdr](https://herdr.dev) panes and acts
 out what your agent is doing. One small Rust binary. Uses the same pet format
 as Codex, so the 750+ community pets work as-is.
 
+![herdr-pet: a pet on a Claude Code pane in herdr](assets/screenshot.png)
+
 ```
 agent working   → typing
 needs input     → waiting (waves first)
