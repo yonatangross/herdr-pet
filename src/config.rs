@@ -140,10 +140,9 @@ impl PetConfig {
         self.size = self.size.clamp(3, 24);
         self.warm_panes = self.warm_panes.clamp(1, 16);
         self.speed = if self.speed.is_finite() { self.speed.clamp(0.25, 4.0) } else { 1.0 };
-        if let Some(p) = self.position.as_mut() {
-            p[0] = p[0].max(0);
-            p[1] = p[1].max(0);
-        }
+        // `position` is deliberately not clamped: negative cells count from the
+        // right/bottom edge (see daemon::apply_placement), and the placement step
+        // clamps the resolved cell to the pane.
     }
 
     /// Atomic: write a temp file in the same directory and rename it into place,
@@ -217,7 +216,8 @@ mod tests {
         assert_eq!(cfg.size, 24);
         assert_eq!(cfg.warm_panes, 1);
         assert_eq!(cfg.speed, 4.0);
-        assert_eq!(cfg.position, Some([0, 0]));
+        // Negative cells survive the load: they are edge-relative, not garbage.
+        assert_eq!(cfg.position, Some([-5, -9]));
     }
 
     #[test]

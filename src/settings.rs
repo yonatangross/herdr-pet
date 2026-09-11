@@ -187,6 +187,7 @@ fn draw_picker(out: &mut impl Write, cfg: &PetConfig, inner: (i32, i32)) -> io::
     }
     // Marker at the pet's spot (default corner when unset).
     let [pc, pr] = cfg.position.unwrap_or([inner.0 - 1, inner.1 - 1]);
+    let (pc, pr) = (if pc < 0 { inner.0 + pc } else { pc }, if pr < 0 { inner.1 + pr } else { pr });
     let fx = (pc.clamp(0, inner.0 - 1)) as f64 / (inner.0 - 1).max(1) as f64;
     let fy = (pr.clamp(0, inner.1 - 1)) as f64 / (inner.1 - 1).max(1) as f64;
     let mx = bx + 1 + (fx * (bw.saturating_sub(3)) as f64).round() as u16;
@@ -255,7 +256,9 @@ pub fn run(apply: &dyn Fn(&PetConfig)) -> io::Result<()> {
                                 KeyCode::Up => (0, -1),
                                 _ => (0, 1),
                             };
-                            set_position(&mut cfg, Some([(c + dc).clamp(0, inner.0 - 1), (r + dr).clamp(0, inner.1 - 1)]));
+                            // Negative (edge-relative) cells keep their sign; absolute ones stay inside the pane.
+                            let step = |v: i32, d: i32, span: i32| if v < 0 { (v + d).min(-1) } else { (v + d).clamp(0, span - 1) };
+                            set_position(&mut cfg, Some([step(c, dc, inner.0), step(r, dr, inner.1)]));
                         }
                         _ => {}
                     },

@@ -347,10 +347,20 @@ impl PetInstance {
     }
 
     fn apply_placement(&mut self, shared: &Shared, tx: &Sender<Msg>) {
+        fn resolve_position(pos: Option<[i32; 2]>, inner: (i32, i32), pet: (i32, i32)) -> [i32; 2] {
+            let from_edge = |v: i32, span: i32, size: i32| if v < 0 { span - size + 1 + v } else { v };
+            match pos {
+                None => [inner.0 - pet.0 - 1, inner.1 - pet.1 - 1],
+                Some([c, r]) => [from_edge(c, inner.0, pet.0), from_edge(r, inner.1, pet.1)],
+            }
+        }
         let (inner_w, inner_h) = self.inner;
         let (cols, rows) = (shared.grid.cols as i32, shared.grid.rows as i32);
-        // Default: bottom-right corner with a one-cell margin; otherwise the dragged cell.
-        let [base_col, base_row] = shared.cfg.position.unwrap_or([inner_w - cols - 1, inner_h - rows - 1]);
+        // Default: bottom-right corner with a one-cell margin; otherwise the configured
+        // cell. Negative cells count from the far edge: -1 is flush right/bottom, -2 is
+        // the default margin, so `position = [-16, -2]` stays left of a pane title
+        // overlay on every pane width.
+        let [base_col, base_row] = resolve_position(shared.cfg.position, (inner_w, inner_h), (cols, rows));
         let placement = Placement {
             viewport_col: (base_col + self.drag.0).clamp(0, (inner_w - cols).max(0)),
             viewport_row: (base_row + self.drag.1).clamp(0, (inner_h - rows).max(0)),

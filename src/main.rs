@@ -276,11 +276,12 @@ fn main() {
             }
             other => Err(format!("unknown pet {:?} (see `herdr-pet list`)", other.unwrap_or(""))),
         },
-        // Explicit position (cells from the pane's top-left); `move default` restores the corner.
+        // Explicit position (cells from the pane's top-left; negative = from the right/bottom
+        // edge, -1 flush, -2 the default margin); `move default` restores the corner.
         "move" => match (arg, args.get(2)) {
             (Some("default"), _) => update_config(|cfg| cfg.position = None),
             (Some(c), Some(r)) => match (c.parse::<i32>(), r.parse::<i32>()) {
-                (Ok(c), Ok(r)) => update_config(|cfg| cfg.position = Some([c.max(0), r.max(0)])),
+                (Ok(c), Ok(r)) => update_config(|cfg| cfg.position = Some([c, r])),
                 _ => Err("move <col> <row> | move default".into()),
             },
             _ => Err("move <col> <row> | move default".into()),

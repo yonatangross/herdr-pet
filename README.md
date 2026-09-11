@@ -114,6 +114,8 @@ quantize = true             # smaller frames, looks the same for sprite art
 drag = "control+option"     # drag keys, or false
 warm_panes = 4              # recently used panes that keep their pet ready
 # position = [24, 10]       # written when you drag; delete to go back to the corner
+# position = [-16, -2]      # negative = from the right/bottom edge (-1 flush, -2 default margin),
+#                           # e.g. to sit left of a pane title overlay on every pane width
 ```
 
 ## Pets
