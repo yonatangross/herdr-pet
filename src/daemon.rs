@@ -64,7 +64,13 @@ impl Status {
         match self {
             Status::Idle | Status::Unknown => Row::Idle,
             Status::Working => Row::Running,
-            Status::Blocked => Row::Waiting,
+            // Blocked means the lane is waiting on a human. Every row in the Codex atlas
+            // but one smiles, so with `Waiting` the pet grins through a stuck lane and the
+            // operator gets no cue from its face (2026-09-12: "why is he always happy").
+            // `Failed` is the atlas's only sad row; borrow it for blocked. A pane that
+            // actually exited still lands on the same row through set_exited, which is
+            // fine: both mean "this lane is not going anywhere without you".
+            Status::Blocked => Row::Failed,
             Status::Done => Row::Review,
         }
     }
@@ -1067,7 +1073,7 @@ mod tests {
     fn herdr_status_maps_to_the_codex_rows() {
         for (s, row) in [
             ("working", Row::Running),
-            ("blocked", Row::Waiting),
+            ("blocked", Row::Failed), // the one sad row, borrowed for "needs a human"
             ("done", Row::Review),
             ("idle", Row::Idle),
             ("something-new", Row::Idle),
