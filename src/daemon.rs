@@ -157,6 +157,15 @@ struct PaneInfo {
     status: Status,
 }
 
+/// Whether a listed pane gets a pet. `all` lists only the current pane, so it
+/// always does; `agents` lists every pane and admits only those running an agent.
+fn wants_pet(mode: Mode, p: &PaneInfo) -> bool {
+    match mode {
+        Mode::All => true,
+        Mode::Agents => p.agent.is_some() || p.focused,
+    }
+}
+
 impl PaneInfo {
     fn from_value(v: &Value) -> Option<PaneInfo> {
         Some(PaneInfo {
@@ -514,12 +523,13 @@ impl Daemon {
             self.resubscribe_status();
             return;
         }
-        // Panes that must have a pet right now, with their current status.
-        let panes: Vec<PaneInfo> = match self.shared.cfg.mode {
+        // Every pane the mode looks at, with its current status. Focus is read from
+        // this full list, so a focused pane without a pet still steers visibility.
+        let listed: Vec<PaneInfo> = match self.shared.cfg.mode {
             Mode::Agents => match socket::request("pane.list", json!({})) {
                 Ok(res) => res["panes"]
                     .as_array()
-                    .map(|a| a.iter().filter_map(PaneInfo::from_value).filter(|p| p.agent.is_some() || p.focused).collect())
+                    .map(|a| a.iter().filter_map(PaneInfo::from_value).collect())
                     .unwrap_or_default(),
                 Err(e) => {
                     log(format!("reconcile: {e}; retrying"));
@@ -537,9 +547,12 @@ impl Daemon {
                 }
             },
         };
-        if let Some(f) = panes.iter().find(|p| p.focused) {
+        if let Some(f) = listed.iter().find(|p| p.focused) {
             self.focused = Some(f.pane_id.clone());
         }
+        // Panes that must have a pet right now.
+        let mode = self.shared.cfg.mode;
+        let panes: Vec<PaneInfo> = listed.into_iter().filter(|p| wants_pet(mode, p)).collect();
         let now = Instant::now();
         for info in &panes {
             if !self.instances.contains_key(&info.pane_id) {
@@ -1044,6 +1057,18 @@ mod tests {
 
     fn cell(w: u32, h: u32) -> Cell {
         Cell { width_px: w, height_px: h, modern: false }
+    }
+
+    #[test]
+    fn agents_mode_gives_no_pet_to_a_focused_shell_pane() {
+        // A freshly split shell pane is focused at birth and has no agent
+        // (seen live 2026-09-13 as wRT:p3, "unknown -> waving").
+        let shell = PaneInfo::from_value(&json!({ "pane_id": "wRT:p3", "focused": true, "agent": null })).unwrap();
+        let agent = PaneInfo::from_value(&json!({ "pane_id": "wRT:p1", "focused": false, "agent": "claude" })).unwrap();
+        assert!(!wants_pet(Mode::Agents, &shell));
+        assert!(wants_pet(Mode::Agents, &agent));
+        // `all` lists only the current pane and always draws it.
+        assert!(wants_pet(Mode::All, &shell));
     }
 
     #[test]
