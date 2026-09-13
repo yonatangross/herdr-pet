@@ -162,7 +162,7 @@ struct PaneInfo {
 fn wants_pet(mode: Mode, p: &PaneInfo) -> bool {
     match mode {
         Mode::All => true,
-        Mode::Agents => p.agent.is_some() || p.focused,
+        Mode::Agents => p.agent.is_some(),
     }
 }
 
